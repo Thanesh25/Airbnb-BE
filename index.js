@@ -26,12 +26,20 @@ app.use('/Uploads', express.static(__dirname + '/Uploads'))
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://airbnb-fe-delta.vercel.app",
     credentials: true,
   })
 );
 // Database connection function called 
 ConnectDB()
+
+app.get('/test', (req, res) => {
+  res.status(200).json({message:"test ok"})
+})
+
+
+
+
 
 // register api
   app.post("/register", async (req, res) => {
