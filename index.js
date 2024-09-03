@@ -34,7 +34,7 @@ app.use(
 ConnectDB()
 
 app.get('/test', (req, res) => {
-  res.status(200).json({message:"test ok"})
+  res.json({message:"test ok"})
 })
 
 
