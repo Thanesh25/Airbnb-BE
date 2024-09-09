@@ -33,9 +33,7 @@ app.use(
 // Database connection function called 
 ConnectDB()
 
-app.get('/test', (req, res) => {
-  res.json({message:"test ok"})
-})
+
 
 
 
@@ -124,16 +122,22 @@ app.post("/upload-by-link", async (req, res) => {
 //Upload by files api 
 const photoMiddleware = multer({ dest: 'Uploads/' });
 app.post('/upload', photoMiddleware.array('photos', 100), (req, res) => {
-  const uploadedFiles =[]
-  for (let i = 0; i < req.files.length; i ++){
-    const { path, originalname } = req.files[i];
-    const parts = originalname.split('.');
-    const ext = parts[parts.length-1]
-    const newPath = path + '.' +ext;
-    fs.renameSync(path, newPath)
-    uploadedFiles.push(newPath.replace('Uploads/', ''));
+
+  try {
+    
+    const uploadedFiles =[]
+    for (let i = 0; i < req.files.length; i ++){
+      const { path, originalname } = req.files[i];
+      const parts = originalname.split('.');
+      const ext = parts[parts.length-1]
+      const newPath = path + '.' +ext;
+      fs.renameSync(path, newPath)
+      uploadedFiles.push(newPath.replace('Uploads/', ''));
+    }
+    res.json(uploadedFiles);
+  } catch (error) {
+    res.status(401).json(error)
   }
-  res.json(uploadedFiles);
 })
 
 // post places api
@@ -175,11 +179,17 @@ app.get('/user-places', async(req, res) => {
 })
 
 // places  get id api
-app.get('/places/:id',  async(req, res) => {
-   const {id}=req.params
-res.json( await PlaceModel.findById(id))
+app.get('/places/:id', async (req, res) => {
+  try {
+    const {id}=req.params
+ res.json( await PlaceModel.findById(id))
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
 
 })
+
+
 // put places api 
 app.put('/places', async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
